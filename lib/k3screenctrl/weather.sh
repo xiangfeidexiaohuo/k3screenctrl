@@ -31,15 +31,15 @@ if [ "$update_time" -eq 0 ]; then
 fi
 
 cur_time=`date +%s`
-last_time=`cat /tmp/weather_time 2>/dev/null`
+last_time=`cat /tmp/k3screenctrl/weather_time 2>/dev/null`
 if [ -z "$last_time" ]; then
 	update_weather=1
-	echo $cur_time > /tmp/weather_time
+	echo $cur_time > /tmp/k3screenctrl/weather_time
 else
 	time_tmp=`expr $cur_time - $last_time`
 	if [ $time_tmp -ge $update_time ]; then
 		update_weather=1
-		echo $cur_time > /tmp/weather_time
+		echo $cur_time > /tmp/k3screenctrl/weather_time
 	fi
 fi
 
@@ -47,7 +47,7 @@ city_checkip=0
 city_checkip=$(uci get k3screenctrl.@general[0].city_checkip 2>/dev/null)
 
 if [ "$city_checkip" = "1" ]; then
-	city_tmp=`cat /tmp/weather_city 2>/dev/null`
+	city_tmp=`cat /tmp/k3screenctrl/weather_city 2>/dev/null`
 	if [ -z "$city_tmp" ]; then
 		wanip=`curl --connect-timeout 3 -s http://pv.sohu.com/cityjson | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}"`
 		city_json=`curl --connect-timeout 3 -s http://ip.taobao.com/service/getIpInfo.php?ip=$wanip`
@@ -58,7 +58,7 @@ if [ "$city_checkip" = "1" ]; then
 		else
 			city=`echo $ip_city`
 		fi
-		echo $city > /tmp/weather_city
+		echo $city > /tmp/k3screenctrl/weather_city
 		uci set k3screenctrl.@general[0].city=$city
 		uci commit k3screenctrl
 	else
@@ -69,7 +69,7 @@ else
 fi
 #echo $city
 
-weather_info=$(cat /tmp/k3-weather.json 2>/dev/null)
+weather_info=$(cat /tmp/k3screenctrl/k3_weather.json 2>/dev/null)
 if [ -z "$weather_info" ]; then
 	update_weather=1
 fi
@@ -80,11 +80,11 @@ if [ -z "$key" ]; then
 fi
 
 if [ "$update_weather" = "1" ]; then
-	rm -rf /tmp/k3-weather.json
-	wget "http://api.seniverse.com/v3/weather/now.json?key=$key&location=$city&language=zh-Hans&unit=c" -T 3 -O /tmp/k3-weather.json 2>/dev/null
+	rm -rf /tmp/k3screenctrl/k3_weather.json
+	wget "http://api.seniverse.com/v3/weather/now.json?key=$key&location=$city&language=zh-Hans&unit=c" -T 3 -O /tmp/k3screenctrl/k3_weather.json 2>/dev/null
 fi
 
-weather_json=$(cat /tmp/k3-weather.json 2>/dev/null)
+weather_json=$(cat /tmp/k3screenctrl/k3_weather.json 2>/dev/null)
 WENDU=`echo $weather_json | jsonfilter -e '@.results[0].now.temperature'`
 TYPE=`echo $weather_json | jsonfilter -e '@.results[0].now.code'`
 
