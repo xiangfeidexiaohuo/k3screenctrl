@@ -10,7 +10,7 @@ MAC_ADDR=$(ifconfig $WAN_IFNAME | grep -oE "([0-9A-Z]{2}:){5}[0-9A-Z]{2}")
 
 CPU_TEMP=$(($(cat /sys/class/thermal/thermal_zone0/temp) / 1000))
 
-HW_VERSION="A1"
+HW_VERSION="ARMv7"
 #${LEDE_DEVICE_REVISION:0:2}
 FW_VERSION=${DISTRIB_REVISION:0:17}
 
