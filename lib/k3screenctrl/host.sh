@@ -85,8 +85,8 @@ do
 done
 
 now_arp_refresh_time=$(date +%s)
-if [ -s /tmp/arp_refresh_time ]; then
-	last_arp_refresh_time=$(cat /tmp/arp_refresh_time)
+if [ -s /tmp/k3screenctrl/arp_refresh_time ]; then
+	last_arp_refresh_time=$(cat /tmp/k3screenctrl/arp_refresh_time)
 	if [ $(($now_arp_refresh_time - $last_arp_refresh_time)) -ge 600 ]; then
 		echo ${#online_list[@]} > /tmp/k3screenctrl/lan_online_list.temp
 		for ((i=0;i<${#online_list[@]};i++))
@@ -98,10 +98,10 @@ if [ -s /tmp/arp_refresh_time ]; then
 			echo "${logo[i]}" >> /tmp/k3screenctrl/lan_online_list.temp
 		done
 		echo 0 >> /tmp/k3screenctrl/lan_online_list.temp
-		echo $now_arp_refresh_time > /tmp/arp_refresh_time
+		echo $now_arp_refresh_time > /tmp/k3screenctrl/arp_refresh_time
 	fi
 else
-	echo $now_arp_refresh_time > /tmp/arp_refresh_time
+	echo $now_arp_refresh_time > /tmp/k3screenctrl/arp_refresh_time
 fi
 
 echo 0
