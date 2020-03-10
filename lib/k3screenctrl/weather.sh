@@ -21,7 +21,7 @@ fi
 
 if [ "$update_time" -eq 0 ]; then
 	echo "OFF"$city
-	echo $WENDU
+	echo $TEMPERATURE
 	echo $DATE_DATE
 	echo $DATE_TIME
 	echo $TYPE
@@ -49,8 +49,8 @@ city_checkip=$(uci get k3screenctrl.@general[0].city_checkip 2>/dev/null)
 if [ "$city_checkip" = "1" ]; then
 	city_tmp=`cat /tmp/k3screenctrl/weather_city 2>/dev/null`
 	if [ -z "$city_tmp" ]; then
-		wanip=`curl --connect-timeout 3 -s http://pv.sohu.com/cityjson | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}"`
-		city_json=`curl --connect-timeout 3 -s http://ip.taobao.com/service/getIpInfo.php?ip=$wanip`
+		wanip=`curl -s http://pv.sohu.com/cityjson | grep -oE "([0-9]{1,3}\.){3}[0-9]{1,3}"`
+		city_json=`curl -s http://ip.taobao.com/service/getIpInfo.php?ip=$wanip`
 		ip_city=`echo $city_json | jsonfilter -e '@.data.city'`
 		ip_county=`echo $city_json | jsonfilter -e '@.data.county'`
 		if [ "$ip_county" != "XX" ]; then
@@ -81,16 +81,16 @@ fi
 
 if [ "$update_weather" = "1" ]; then
 	rm -rf /tmp/k3screenctrl/k3_weather.json
-	wget "http://api.seniverse.com/v3/weather/now.json?key=$key&location=$city&language=zh-Hans&unit=c" -T 3 -O /tmp/k3screenctrl/k3_weather.json 2>/dev/null
+	wget "http://api.seniverse.com/v3/weather/now.json?key=$key&location=$city&language=zh-Hans&unit=c" -O /tmp/k3screenctrl/k3_weather.json 2>/dev/null
 fi
 
 weather_json=$(cat /tmp/k3screenctrl/k3_weather.json 2>/dev/null)
-WENDU=`echo $weather_json | jsonfilter -e '@.results[0].now.temperature'`
+TEMPERATURE=`echo $weather_json | jsonfilter -e '@.results[0].now.temperature'`
 TYPE=`echo $weather_json | jsonfilter -e '@.results[0].now.code'`
 
 #output weather data
 echo $city
-echo $WENDU
+echo $TEMPERATURE
 echo $DATE_DATE
 echo $DATE_TIME
 echo $TYPE
