@@ -37,7 +37,7 @@ do
 	hostname[i]=$(grep ${online_list[i]} -w /tmp/dhcp.leases | awk '{print $4}')
 	hostmac=${mac_online_list[i]//:/} && hostmac=${hostmac:0:6}
 	logo[i]=$(grep -i $hostmac /lib/k3screenctrl/oui/oui.txt | awk '{print $1}')
-	
+
 	#for k3screenctrl/k3_custom
 	tmp_mac=$(echo ${mac_online_list[i]} | tr 'a-z' 'A-Z')
 	tmp_uci=$(cat /tmp/k3screenctrl/k3_custom | grep $tmp_mac | awk -F'=' '{print $1}' | awk -F'.' '{print$1"."$2}')
@@ -91,7 +91,6 @@ if [ -s /tmp/k3screenctrl/arp_refresh_time ]; then
 		echo ${#online_list[@]} > /tmp/k3screenctrl/lan_online_list.temp
 		for ((i=0;i<${#online_list[@]};i++))
 		do
-			arp -d ${online_list[i]}
 			echo "${hostname[i]}" >> /tmp/k3screenctrl/lan_online_list.temp
 			echo "${dw_sp[i]}" >> /tmp/k3screenctrl/lan_online_list.temp
 			echo "${up_sp[i]}" >> /tmp/k3screenctrl/lan_online_list.temp
